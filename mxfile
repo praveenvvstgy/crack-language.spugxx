@@ -1,0 +1,47 @@
+
+$target = "mlib";
+$targetType = 'lib';
+
+@units =
+	(
+	'MsgBase.d',
+	'MsgList.d',
+	'MsgNumber.d',
+	'PSLBase.d',
+	'MsgId.d',
+	'MsgKeySet.d',
+	'MsgString.d',
+	'Socket.d',
+	'InetAddress.d',
+	'Exception.d',
+	'SockException.d',
+	'ServerSocket.d',
+	'SockStream.d',
+	'SockSet.d',
+	'CntPtrBase.d',
+	'CntObj.d',
+	);
+
+@additional =
+	(
+	'Ptrs.h',
+	'PtrSList.h',
+	'CntPtr.h',
+	);
+
+if ($ENV{'OSTYPE'} eq 'Linux')
+	{
+	%locations =
+		(
+		'a',			'/a/mlib'
+		);
+	}
+else
+	{
+	$ENV{'INCLUDE'} .= ';../gnulib';
+	$ENV{'LIB'} .= ';../gnulib';
+	%locations =
+		(
+		'a',			'a:/mlib'
+		);
+	}
