@@ -1,16 +1,18 @@
 
 
-.SUFFIXES: .d .h.new
+GNULIB_INCLUDE=-I../gnulib
 
 ifndef MCC
-MCC=mcc <
+MCC=mcc
 endif
+
+.SUFFIXES: .d .h.new
 
 .d.cc:
 	$(MCC) $<
 
 .cc.o:
-	g++ -g -c $< -o $*.o
+	g++ -g -c -I. $(GNULIB_INCLUDE) $< -o $*.o
 
 %.h : %.h.new
 	{\
@@ -19,8 +21,6 @@ endif
 		mv $*.h.new $*.h;\
 	fi;\
 	}
-
-CPLUS_INCLUDE_PATH:=.:../gnulib:$(CPLUS_INCLUDE_PATH)
 
 # source files
 SRCS:=\
