@@ -6,6 +6,7 @@
 #intinclude Ptrs
 
 #impinclude stdlib
+#impinclude string
 
 class MsgKeySet : public MsgBase {
    private:
