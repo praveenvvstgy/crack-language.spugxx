@@ -2,8 +2,12 @@
 
 .SUFFIXES: .d .h.new
 
+ifndef MCC
+MCC=mcc <
+endif
+
 .d.cc:
-	mcc <$<
+	$(MCC) $<
 
 .cc.o:
 	g++ -g -c $< -o $*.o
