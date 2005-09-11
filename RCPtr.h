@@ -22,6 +22,9 @@
 #ifndef SPUG_RCPTR_H
 #define SPUG_RCPTR_H
 
+#include <iostream>
+#include <exception>
+
 namespace spug {
 
 /**
@@ -71,7 +74,37 @@ class RCPtr {
 	 if (obj0) obj0->incref();
       }
 
-      /** trickery to allow us to convert to a base class pointer */
+
+      /** 
+       * Upcast an pointer to a derived class U to the base class pointer.
+       * This will fail at compile time if U is not derived from T.
+       */
+      template <class U>
+      static const RCPtr<T> &ucast(const RCPtr<U> &other) {
+	 // let the compiler verify that T derives from U (and hopefully
+	 // optimize this away)
+	 T *dummy = other.obj;
+	 return *(reinterpret_cast<const RCPtr<T> *>(&other));
+      }
+
+      /**
+       * Downcast a pointer to a base class U to the derived class pointer.
+       * This will fail at runtime with a "std::bad_cast" exception if the
+       * referenced object is not a T instance.
+       */
+      template <class U>
+      static const RCPtr<T> &dcast(const RCPtr<U> &other) {
+	 // again, let the system verify using a dynamic cast
+	 dynamic_cast<T&>(*other.obj);
+	 return *(reinterpret_cast<const RCPtr<T> *>(&other));
+      }
+
+#if 0
+      /** 
+       * trickery to allow us to convert to a base class pointer.  This
+       * doesn't seem to work on some compilers, and doesn't work well on
+       * almost any - pray you avoid it.  Stick to the explict casts.
+       */
       template <class U>
       operator const RCPtr<U> &() {
 	 // let the compiler verify that T derives from U (and hopefully
@@ -79,6 +112,7 @@ class RCPtr {
 	 U *dummy = obj;
 	 return *(reinterpret_cast<const RCPtr<U> *>(this));
       }
+#endif
 
       /**
        * Used to invoke a member function on the receiver's *ManagedObject*
