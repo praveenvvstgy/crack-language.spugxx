@@ -64,6 +64,8 @@ class Tester : public RCBase {
       ~Tester() { deleted = true; }
 };
 
+class NotTester : public RCBase {};
+
 void rcptr_func(const RCPtr<RCBase> &obj) {}
 
 main() {
@@ -87,14 +89,16 @@ main() {
    BEGIN_TEST("passing as base class")
       bool deleted;
       RCPtr<Tester> tester = new Tester(deleted);
-      rcptr_func(tester);
+//      rcptr_func(tester);
+      rcptr_func(RCPtr<RCBase>::ucast(tester));
    END_TEST(true)
 
    BEGIN_TEST("assignment to base class");
       bool deleted;
       RCPtr<Tester> tester = new Tester(deleted);
       RCPtr<RCBase> base;
-      base = tester;
+      base = RCPtr<RCBase>::ucast(tester);
+//      base = tester;
    END_TEST(tester->refcnt() == 2)
 
    BEGIN_TEST("construction of base class pointer");
@@ -102,7 +106,24 @@ main() {
       RCPtr<Tester> tester = new Tester(deleted);
       // XXX for some reason, this doesn't work if we use the equivalent "base
       // = tester" form...
-      RCPtr<RCBase> base(tester);
+      RCPtr<RCBase> base(RCPtr<RCBase>::ucast(tester));
    END_TEST(tester->refcnt() == 2)
+
+   BEGIN_TEST("dynamic cast to derived class");
+     bool deleted;
+     RCPtr<RCBase> base = new Tester(deleted);
+     RCPtr<Tester> tester = RCPtr<Tester>::dcast(base);
+   END_TEST(tester->refcnt() == 2)
+
+   BEGIN_TEST("failing dynamic cast");
+      bool passed = false;
+      try {
+	bool deleted;
+	RCPtr<RCBase> base = new Tester(deleted);
+	RCPtr<NotTester> notTester = RCPtr<NotTester>::dcast(base);
+      } catch (const bad_cast &ex) {
+	 passed = true;
+      }
+   END_TEST(passed)
 }
 
