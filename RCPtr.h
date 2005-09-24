@@ -175,5 +175,11 @@ class RCPtr {
 
 } // namespace spug
 
+/**
+  macro to easily define RCPtr instances, complete with a forward
+  declaration.
+*/
+#define SPUG_RCPTR(cls) class cls; typedef spug::RCPtr<cls> cls##Ptr;
+
 #endif
 
