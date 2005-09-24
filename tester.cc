@@ -20,8 +20,11 @@
 
 #include "RCPtr.h"
 #include "RCBase.h"
+#include "Exception.h"
+#include "Tracer.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 using namespace spug;
@@ -125,5 +128,32 @@ main() {
 	 passed = true;
       }
    END_TEST(passed)
+
+   BEGIN_TEST("basic exception construction and streaming");
+      Exception ex("basic string");
+      ostringstream temp;
+      temp << ex;
+   END_TEST(temp.str() == "basic string")
+
+   BEGIN_TEST("exception from string object")
+      string str = "basic string";
+      Exception ex(str);
+      ostringstream temp;
+      temp << ex;
+   END_TEST(temp.str() == "basic string")
+
+   Tracer::Level a = Tracer::get().getLevel("a");
+   Tracer::Level b = Tracer::get().getLevel("b");
+
+   BEGIN_TEST("enabling a level")
+      Tracer::get().enable(a);
+   END_TEST(true)
+
+   BEGIN_TEST("checking enabled level")
+   END_TEST(Tracer::get().enabled(a));
+
+   BEGIN_TEST("checking disabled level")
+   END_TEST(!Tracer::get().enabled(b));
+
 }
 
