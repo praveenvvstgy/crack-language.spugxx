@@ -127,7 +127,7 @@ class RCPtr {
       }
 
       /** allows us to easily check for NULL in a conditional statement. */
-      operator int() {
+      operator int() const {
 	 return (int)obj;
       }
       
