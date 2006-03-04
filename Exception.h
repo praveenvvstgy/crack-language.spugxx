@@ -23,12 +23,14 @@ class Exception : public std::exception {
 
       ~Exception() throw () {}
 
+      virtual const char *getClassName() const { return "Exception"; }
+
       friend std::ostream &
 	 operator <<(std::ostream &out, const Exception &err);
 };
 
 inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
-   out << err.msg;
+   out << err.getClassName() << ": " << err.msg;
 }
 
 // some macros to make it extremely easy to define derived exceptions
@@ -39,6 +41,7 @@ inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
       public: \
 	 cls(const char *msg) : base(msg) {} \
 	 cls(const std::string &msg) : base(msg) {} \
+	 virtual const char *getClassName() const { return #cls; } \
    };
 
 // defines an exception class derived from spug::Exception

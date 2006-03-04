@@ -4,6 +4,7 @@ lib_LIBRARIES = libspug++.a
 TESTS = tester
 tester_SOURCES = tester.cc
 tester_LDADD = libspug++.a
-libspug___a_SOURCES = Tracer.cc
+libspug___a_SOURCES = Tracer.cc FileReader.cc
 include_spugdir = $(prefix)/include/spug
-include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h
+include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
+   FileReader.h types.h

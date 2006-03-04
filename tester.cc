@@ -22,6 +22,7 @@
 #include "RCBase.h"
 #include "Exception.h"
 #include "Tracer.h"
+#include "FileReader.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,6 +32,8 @@ using namespace spug;
 
 ofstream logger("tester.log");
 
+int failCount = 0;
+
 void success() {
    cerr << "ok" << endl;
    logger << "ok" << endl;
@@ -39,6 +42,7 @@ void success() {
 void failed() {
    cerr << "failed" << endl;
    logger << "failed" << endl;
+   ++failCount;
 }
 
 #define BEGIN_TEST(title) \
@@ -133,14 +137,14 @@ main() {
       Exception ex("basic string");
       ostringstream temp;
       temp << ex;
-   END_TEST(temp.str() == "basic string")
+   END_TEST(temp.str() == "Exception: basic string")
 
    BEGIN_TEST("exception from string object")
       string str = "basic string";
       Exception ex(str);
       ostringstream temp;
       temp << ex;
-   END_TEST(temp.str() == "basic string")
+   END_TEST(temp.str() == "Exception: basic string")
 
    Tracer::Level a = Tracer::get().getLevel("a");
    Tracer::Level b = Tracer::get().getLevel("b");
@@ -155,5 +159,16 @@ main() {
    BEGIN_TEST("checking disabled level")
    END_TEST(!Tracer::get().enabled(b));
 
+   BEGIN_TEST("checking FileReader")
+      Byte buf[80];
+      FileReader reader("testdata");
+   END_TEST(reader.read(buf, sizeof(buf)) == sizeof(buf) &&
+	    std::string(reinterpret_cast<const char *>(buf), 80) == 
+	     std::string("1234567890123456789012345678901234567890"
+		          "1234567890123456789012345678901234567890"
+			 )
+	    )
+
+   return failCount > 0;
 }
 
