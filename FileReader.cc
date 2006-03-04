@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 #include "Exception.h"
 
 using namespace spug;
@@ -55,6 +56,7 @@ size_t FileReader::read(Byte *buffer, size_t count) {
    size_t rval = ::read(fd, buffer, count);
    if (rval == -1)
       throwSysError();
+   return rval;
 }
 
 void FileReader::close() {
