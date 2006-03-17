@@ -23,6 +23,8 @@
 #include "Exception.h"
 #include "Tracer.h"
 #include "FileReader.h"
+#include "Iterator.h"
+#include "STLIteratorImpl.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -74,6 +76,23 @@ class Tester : public RCBase {
 class NotTester : public RCBase {};
 
 void rcptr_func(const RCPtr<RCBase> &obj) {}
+
+typedef STLIteratorImpl<char, vector<char>, vector<char>::iterator> 
+   CharIterImpl;
+
+class TestCharIterImpl : public CharIterImpl {
+   public:
+      bool destructed;
+
+      TestCharIterImpl(vector<char> &coll) : 
+	 CharIterImpl(coll), 
+	 destructed(false) {
+      }
+
+      ~TestCharIterImpl() {
+	 destructed = true;
+      }
+};
 
 main() {
    RCBase obj;
@@ -168,6 +187,35 @@ main() {
 		          "1234567890123456789012345678901234567890"
 			 )
 	    )
+
+   BEGIN_TEST("FileReader::seek()")
+      Byte buf[5];
+      FileReader reader("testdata");
+      reader.seek(5);
+   END_TEST(reader.read(buf, 5) == 5 &&
+	    std::string(reinterpret_cast<const char *>(buf), 5) == "67890"
+	    )
+
+
+   BEGIN_TEST("Basic iterators")
+      vector<char> v;
+      char buf[5];
+      v.push_back('t');
+      v.push_back('e');
+      v.push_back('s');
+      v.push_back('t');
+      int i = 0;
+      for (Iterator<char> ci(CharIterImpl::alloc(v)); ci; ++ci, ++i)
+	 buf[i] = *ci;
+      buf[i] = 0;
+   END_TEST(std::string(buf) == "test")
+
+#if 0
+   BEGIN_TEST("iterator cleanup")
+      vector<char> v;
+      {
+	 Iterator<char> iter(TestCharIterImpl::alloc
+#endif
 
    return failCount > 0;
 }
