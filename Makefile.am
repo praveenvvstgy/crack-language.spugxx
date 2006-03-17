@@ -7,4 +7,4 @@ tester_LDADD = libspug++.a
 libspug___a_SOURCES = Tracer.cc FileReader.cc
 include_spugdir = $(prefix)/include/spug
 include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
-   FileReader.h types.h
+   FileReader.h types.h Iterator.h IteratorImpl.h STLIteratorImpl.h
