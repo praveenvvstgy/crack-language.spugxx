@@ -63,3 +63,23 @@ void FileReader::close() {
    ::close(fd);
    fd = -1;
 }
+
+off_t FileReader::seek(off_t offset, FileReader::Whence whence) {
+
+// translate the flag if necessary - shouldn't be an issue
+#if SEEK_SET != 0 || SEEK_CUR != 1 || SEEK_END != 2
+   switch (whence) {
+      case seekSet:
+	 whence = SEEK_SET;
+	 break;
+      case seekCur:
+	 whence = SEEK_CUR;
+	 break;
+      case seekEnd:
+	 whence = SEEK_END;
+	 break;
+   }
+#endif
+
+   return lseek(fd, offset, whence);
+}

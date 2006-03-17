@@ -23,10 +23,15 @@
 #ifndef SPUG_FILEREADER_H
 #define SPUG_FILEREADER_H
 
+#include <sys/types.h>
+#include <unistd.h>
 #include "Reader.h"
 
 namespace spug {
 
+/**
+ * Class for reading bytes from a file.
+ */
 class FileReader : public Reader {
 
    private:
@@ -43,6 +48,17 @@ class FileReader : public Reader {
 
       /** close the file. */
       void close();
+
+      enum Whence { 
+	 seekSet = SEEK_SET, 
+	 seekCur = SEEK_CUR, 
+	 seekEnd = SEEK_END 
+      };
+
+      /**
+       * Seeks to a file position.
+       */
+      off_t seek(off_t offset, Whence whence = seekSet);
 };
 
 } // namespace spug
