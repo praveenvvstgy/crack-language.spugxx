@@ -31,6 +31,7 @@ class Exception : public std::exception {
 
 inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
    out << err.getClassName() << ": " << err.msg;
+   return out;
 }
 
 // some macros to make it extremely easy to define derived exceptions
