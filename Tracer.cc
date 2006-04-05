@@ -20,14 +20,25 @@
 
 #include "Tracer.h"
 #include <string>
+#include <iostream>
 
 using namespace spug;
 using namespace std;
 
 // the tracer singleton
-Tracer Tracer::theTracer;
+Tracer *Tracer::theTracer = 0;
 
-Tracer::Tracer() : lastLevel(0) {}
+Tracer::Tracer() : lastLevel(0) {
+}
+
+// the only reason that this isn't inlined is to guarantee that "theTracer"
+// has been initialized.
+Tracer &Tracer::get() {
+   if (!theTracer)
+      theTracer = new Tracer();
+
+   return *theTracer;
+}
 
 Tracer::Level Tracer::getLevel(const char *levelName) {
    string name = levelName;

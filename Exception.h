@@ -18,6 +18,7 @@ class Exception : public std::exception {
       std::string msg;
 
    public:
+      Exception() {}
       Exception(const char *msg) : msg(msg) {}
       Exception(const std::string &msg) : msg(msg) {}
 
@@ -40,6 +41,7 @@ inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
 #define SPUG_DERIVED_EXCEPTION(cls, base) \
    class cls : public base { \
       public: \
+         cls() {} \
 	 cls(const char *msg) : base(msg) {} \
 	 cls(const std::string &msg) : base(msg) {} \
 	 virtual const char *getClassName() const { return #cls; } \
