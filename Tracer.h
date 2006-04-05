@@ -41,7 +41,7 @@ class Tracer {
       int lastLevel;
 
       // the tracer singleton
-      static Tracer theTracer;
+      static Tracer *theTracer;
 
       Tracer();
 
@@ -60,7 +60,7 @@ class Tracer {
       };
 
       /** returns the Tracer singleton */
-      static Tracer &get() { return theTracer; }
+      static Tracer &get();
 
       /** Returns a Level identifier for a given level name. */
       Level getLevel(const char *levelName);

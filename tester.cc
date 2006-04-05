@@ -25,9 +25,13 @@
 #include "FileReader.h"
 #include "Iterator.h"
 #include "STLIteratorImpl.h"
+#include "TestMarshaller.h"
+#include "NativeMarshaller.h"
+#include "TypeInfo.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdio.h>
 
 using namespace std;
 using namespace spug;
@@ -47,6 +51,8 @@ void failed() {
    ++failCount;
 }
 
+SPUG_EXCEPTION(Fail)
+
 #define BEGIN_TEST(title) \
    cerr << title << "..." << flush; \
    logger << "=============" << "\n" << title << "\n" << "===========" << endl; \
@@ -57,6 +63,12 @@ void failed() {
       success(); \
    else \
       failed(); \
+   } catch (const Fail &ex) { \
+      logger << ex << endl; \
+      failed(); \
+   } catch (const Exception &ex) { \
+      logger << ex << endl; \
+      failed(); \
    } catch (const exception &ex) { \
       logger << ex.what() << endl; \
       failed(); \
@@ -64,6 +76,8 @@ void failed() {
       logger << "anon exception" << endl; \
       failed(); \
    }
+
+#define FAIL(msg) throw Fail(msg);
 
 class Tester : public RCBase {
    public:
@@ -215,6 +229,82 @@ main() {
       vector<char> v;
       {
 	 Iterator<char> iter(TestCharIterImpl::alloc
+#endif
+
+   BEGIN_TEST("TypeInfo construction from instance and demangling")
+      FileReader reader("testdata");
+   END_TEST(TypeInfo::get(reader)->getName() == std::string("spug::FileReader"))
+
+   {
+      Byte buffer[100];
+      const size_t bufSize = sizeof(buffer);
+      BEGIN_TEST("Marshalling")
+         TestMarshaller writeable(100, 1.0, "test");
+         NativeMarshaller m(writeable);
+         size_t count = m.marshall(buffer, sizeof(buffer));
+         FILE *fp = fopen("marshalled.out", "w");
+         fwrite(buffer, 1, count, fp);
+         fclose(fp);
+      END_TEST(count < sizeof(buffer))
+
+      BEGIN_TEST("Unmarshalling")
+         TestMarshaller readable;
+         NativeMarshaller m(readable);
+         size_t count = m.unmarshall(buffer, sizeof(buffer));
+      END_TEST(readable.intVal == 100 && readable.floatVal == 1.0 &&
+               readable.stringVal == "test"
+               )
+   }
+
+#if 0
+   Tracer &tracer = Tracer::get();
+   tracer.enable(tracer.getLevel("spug::NativeMarshaller"));
+#endif
+   BEGIN_TEST("Marshalling across buffers")
+      int totalSize = 100;
+      for (size_t bufSize = 1; bufSize < totalSize; ++bufSize) {
+         Byte *buffer = new Byte[bufSize + 4];
+         int beef = *rccast<int *, char *>("BEEF");
+
+         // stick a marker at the end of the buffer
+         *rcast<int *>(&buffer[bufSize]) = beef;
+
+         TestMarshaller readable(100, 1.0, "test"), writable;
+         NativeMarshaller m(readable), n(writable);
+         while (!m.done()) {
+            // marshall from one
+            size_t count = m.marshall(buffer, bufSize);
+            if (count > bufSize)
+               FAIL("marshalled too much");
+
+            if (*rcast<int *>(&buffer[bufSize]) != beef)
+               FAIL("bad beef!");
+
+            // unmarshall to the other
+            if (n.unmarshall(buffer, bufSize) > bufSize)
+               FAIL("unmarshalled too much");
+         }
+
+         if (!n.done())
+            FAIL("done marshalling, but not done unmarshalling");
+
+         if (writable.intVal != 100 || writable.floatVal != 1.0 || 
+             writable.stringVal != "test"
+             )
+            FAIL("unmarshalled to an incorrect state");
+
+         delete buffer;
+      }
+   END_TEST(true)
+
+
+
+
+#if 0
+      assert(m.done());
+      Unmarshaller u(readable);
+      m.write(buffer, sizeof(buffer));
+      assert(readable.intVal == 100 && readable.stringVal == "test");
 #endif
 
    return failCount > 0;
