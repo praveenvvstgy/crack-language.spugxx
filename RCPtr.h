@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <exception>
+#include <assert.h>
 
 namespace spug {
 
@@ -51,6 +52,19 @@ class RCPtr {
       RCPtr(T *obj0) : obj(obj0) {
 	 if (obj) obj->incref();
       }
+
+      /** Construct from a derived class RCPtr */
+      template <class U>
+      RCPtr(const RCPtr<U> &other) : obj(0) {
+	 if (other.obj) {
+	    obj = dynamic_cast<T *>(other.obj);
+	    if (!obj)
+	       throw std::bad_cast();
+	    else
+	       obj->incref();
+	 }
+      }
+	 
 
       /** Constructs a RCPtr initialized to NULL. */
       RCPtr() : obj(0) {}
@@ -84,6 +98,9 @@ class RCPtr {
 	 // let the compiler verify that T derives from U (and hopefully
 	 // optimize this away)
 	 T *dummy = other.obj;
+	 assert(reinterpret_cast<void *>(dummy) == 
+	         reinterpret_cast<void *>(other.obj)
+		);
 	 return *(reinterpret_cast<const RCPtr<T> *>(&other));
       }
 
