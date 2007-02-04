@@ -27,6 +27,7 @@
 #include "STLIteratorImpl.h"
 #include "TestMarshaller.h"
 #include "NativeMarshaller.h"
+#include "Socket.h"
 #include "TypeInfo.h"
 #include <iostream>
 #include <fstream>
@@ -297,8 +298,19 @@ main() {
       }
    END_TEST(true)
 
-
-
+   BEGIN_TEST("basic socket functionality")
+      Socket srv(0);
+      srv.listen(5);
+      Socket client = Socket(InetAddress("127.0.0.1"), srv.getPort());
+      Socket serverClient = srv.accept();
+      char outBuf[] = "this is a test";
+      client.send(outBuf, sizeof(outBuf));
+      char inBuf[256];
+      serverClient.recv(inBuf, sizeof(inBuf));
+      strcmp(inBuf, outBuf);
+      if (strcmp(inBuf, outBuf))
+         FAIL("buffers do not match");
+   END_TEST(true)
 
 #if 0
       assert(m.done());
