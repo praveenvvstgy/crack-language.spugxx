@@ -5,11 +5,11 @@ TESTS = tester
 tester_SOURCES = tester.cc TestMarshaller.cc
 tester_LDADD = libspug++.a
 libspug___a_SOURCES = Tracer.cc FileReader.cc NativeMarshaller.cc \
-   Marshallable.cc
+   Marshallable.cc Socket.cc InetAddress.cc SockException.cc
 include_spugdir = $(prefix)/include/spug
 include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    FileReader.h types.h Iterator.h IteratorImpl.h STLIteratorImpl.h casts.h \
-   Marshallable.h Marshaller.h NativeMarshaller.h
+   Marshallable.h Marshaller.h NativeMarshaller.h TypeInfo.h
 
 # XXX we apologize for the very lame release tarball generator
 
@@ -22,3 +22,7 @@ tarball:
 		./bootstrap)
 	tar -cvzf spug++-$(VER).tar.gz spug++-$(VER)
 	rm -rf spug++-$(VER)
+
+install-autoconf:
+	$(INSTALL) -d $(prefix)/share/aclocal
+	$(INSTALL) spug++.m4 $(prefix)/share/aclocal
