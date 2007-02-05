@@ -21,7 +21,9 @@
 #ifndef SPUG_SOCKET_H
 #define SPUG_SOCKET_H
 
-#include <InetAddress.h>
+#include "InetAddress.h"
+
+#include <unistd.h> // for close
 
 namespace spug {
 
