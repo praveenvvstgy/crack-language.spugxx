@@ -171,14 +171,14 @@ main() {
       Exception ex("basic string");
       ostringstream temp;
       temp << ex;
-   END_TEST(temp.str() == "Exception: basic string")
+   END_TEST(temp.str() == "spug::Exception: basic string")
 
    BEGIN_TEST("exception from string object")
       string str = "basic string";
       Exception ex(str);
       ostringstream temp;
       temp << ex;
-   END_TEST(temp.str() == "Exception: basic string")
+   END_TEST(temp.str() == "spug::Exception: basic string")
 
    Tracer::Level a = Tracer::get().getLevel("a");
    Tracer::Level b = Tracer::get().getLevel("b");
