@@ -55,6 +55,7 @@ namespace spug {
 
 class String : public std::string {
     public:
+        String() {}
         String(const char *text) : std::string(text) {}
 
         operator const char *() { return c_str(); }
