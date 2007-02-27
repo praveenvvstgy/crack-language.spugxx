@@ -93,6 +93,6 @@ class Tracer {
 } // namespace spug
 
 #define SPUG_TRACE(level, msg) \
-   if (Tracer::get().enabled(level)) cout << msg << endl;
+   if (spug::Tracer::get().enabled(level)) cout << msg << endl;
 
 #endif
