@@ -88,7 +88,7 @@ class STLIteratorImpl : public IteratorImpl<Elem> {
 	 begin++;
       }
 
-      virtual Elem &cur() {
+      virtual const Elem &cur() {
 	 return *begin;
       }
 

@@ -58,7 +58,7 @@ class IteratorImpl {
       /**
        * Returns a reference to the current item.
        */
-      virtual Elem &cur() = 0;
+      virtual const Elem &cur() = 0;
 
       /**
        * Returns true if the iterator is valid, false if not.

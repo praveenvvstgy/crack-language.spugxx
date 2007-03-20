@@ -62,30 +62,38 @@ class Iterator {
       /**
        * Dereferences the iterator.
        */
-      Elem &operator *() {
+      const Elem &operator *() {
 	 assert(impl);
 	 return impl->cur();
+      }
+
+      /**
+       * Dereferences members of the iterator.
+       */
+      const Elem *operator ->() {
+         assert(impl);
+         return &impl->cur();
       }
 
       /**
        * Post-increment operator - increments the iterator and returns the
        * original value.
        */
-      Elem &operator ++() {
+      Iterator operator ++(int) {
 	 assert(impl);
-	 Elem &elem = impl->cur();
+         Iterator temp(impl);
 	 impl->next();
-	 return elem;
+	 return temp;
       }
 
       /**
        * Pre-increment operator - increments the iterator and returns the
        * new value.
        */
-      Elem &operator ++(int) {
+      Iterator &operator ++() {
 	 assert(impl);
 	 impl->next();
-	 return impl->cur();
+	 return *this;
       }
 
       /** 
