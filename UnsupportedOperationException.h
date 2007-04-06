@@ -20,6 +20,8 @@
 #ifndef SPUG_UNSUPPORTEDOPERATIONEXCEPTION_H
 #define SPUG_UNSUPPORTEDOPERATIONEXCEPTION_H
 
+#include "Exception.h"
+
 namespace spug {
 
 /**
