@@ -57,15 +57,20 @@ class String : public std::string {
     public:
         String() {}
         String(const char *text) : std::string(text) {}
+        String(const std::string &other) : std::string(other) {}
 
         operator const char *() { return c_str(); }
 
         String operator +(const std::string &other) const {
-            return (const String&)std::operator +(*this, other);
+            String temp = *this;
+            temp += other;
+            return temp;
         }
 
         String operator +(const char *other) const {
-            return (const String&)std::operator +(*this, other);
+            String temp = *this;
+            temp += other;
+            return temp;
         }
 };
 

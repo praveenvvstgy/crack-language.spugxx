@@ -35,7 +35,7 @@ namespace spug {
  */
 class Exception : public std::exception {
 
-   private:
+   protected:
       std::string msg;
 
    public:
@@ -49,12 +49,19 @@ class Exception : public std::exception {
          return TypeInfo::get(*this)->getName(); 
       }
 
+      /**
+       * Returns the user supplied message string.
+       */
+      virtual std::string getMessage() const {
+         return msg;
+      }
+
       friend std::ostream &
 	 operator <<(std::ostream &out, const Exception &err);
 };
 
 inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
-   out << err.getClassName() << ": " << err.msg;
+   out << err.getClassName() << ": " << err.getMessage();
    return out;
 }
 

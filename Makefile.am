@@ -5,13 +5,15 @@ TESTS = tester
 tester_SOURCES = tester.cc TestMarshaller.cc
 tester_LDADD = libspug++.a
 libspug___a_SOURCES = Tracer.cc FileReader.cc NativeMarshaller.cc \
-   Marshallable.cc Socket.cc InetAddress.cc SockException.cc
+   Marshallable.cc Socket.cc InetAddress.cc SockException.cc \
+   SystemException.cc Mutex.cc 
 include_spugdir = $(prefix)/include/spug
 include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    FileReader.h types.h Iterator.h IteratorImpl.h STLIteratorImpl.h casts.h \
    Marshallable.h Marshaller.h NativeMarshaller.h TypeInfo.h String.h \
    UnsupportedOperationException.h OutOfRangeException.h \
-   Logger.h DoesNotExistException.h
+   Logger.h DoesNotExistException.h StringFmt.h SystemException.h Mutex.h \
+   Locker.h InvalidStateException.h
 
 # XXX we apologize for the very lame release tarball generator
 

@@ -1,10 +1,6 @@
 /*===========================================================================*\
 
-   $Id$
-
-   Basic, non-class, type definitions.
-
-   Copyright (C) 2006 Michael A. Muller
+   Copyright (C) 2007 Michael A. Muller
 
    Permission is granted to use, modify and redistribute this code,
    providing that the following conditions are met:
@@ -20,21 +16,38 @@
 
 \*===========================================================================*/
 
-#ifndef SPUG_TYPES_H
-#define SPUG_TYPES_H
+#include "Mutex.h"
 
-namespace spug {
+#include <stdlib.h>
+#include <errno.h>
 
-namespace Const {
-   enum {
-      // buffer big enough for the output of strerror_r
-      errorBufferSize = 256
-   };
+#include "SystemException.h"
+
+using namespace spug;
+
+Mutex::Mutex(bool recursive) {
+   if (recursive) {
+      pthread_mutexattr_t attr;
+      pthread_mutexattr_init(&attr);
+      pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+
+      pthread_mutex_init(&mutex, &attr);
+   } else {
+      pthread_mutex_init(&mutex, 0);
+   }
 }
 
-typedef unsigned char Byte;
-typedef short Int16;
-
+Mutex::~Mutex() {
+   if (pthread_mutex_destroy(&mutex))
+      abort();
 }
 
-#endif
+void Mutex::acquire() {
+   if (pthread_mutex_lock(&mutex))
+      throw SystemException(errno, "locking mutex");
+}
+
+void Mutex::release() {
+   if (pthread_mutex_unlock(&mutex))
+      throw SystemException(errno, "unlocking mutex");
+}

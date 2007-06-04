@@ -1,10 +1,6 @@
 /*===========================================================================*\
 
-   $Id$
-
-   Basic, non-class, type definitions.
-
-   Copyright (C) 2006 Michael A. Muller
+   Copyright (C) 2007 Michael A. Muller
 
    Permission is granted to use, modify and redistribute this code,
    providing that the following conditions are met:
@@ -20,21 +16,30 @@
 
 \*===========================================================================*/
 
-#ifndef SPUG_TYPES_H
-#define SPUG_TYPES_H
+#ifndef SPUG_SYSTEMEXCEPTION_H
+#define SPUG_SYSTEMEXCEPTION_H
+
+#include "Exception.h"
 
 namespace spug {
 
-namespace Const {
-   enum {
-      // buffer big enough for the output of strerror_r
-      errorBufferSize = 256
-   };
-}
+/**
+ * An exception thrown as the result of a failed system function.  These have
+ * an error code that should be the value of "errno" after the failure.
+ */
+class SystemException : public Exception {
+   private:
+      int errorCode;
 
-typedef unsigned char Byte;
-typedef short Int16;
+   public:
+      SystemException(int errorCode, const char *msg) : 
+         errorCode(errorCode),
+         Exception(msg) {
+      }
 
-}
+      virtual std::string getMessage() const;
+};
+
+} // namespace spug
 
 #endif
