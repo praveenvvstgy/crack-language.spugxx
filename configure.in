@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 AC_INIT(spug++, 0.1, mmuller@enduden.com)
 AM_INIT_AUTOMAKE(spug++, 0.1)
 AC_CONFIG_SRCDIR([RCPtr.h])
-#AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
 AC_PROG_CC
@@ -13,6 +13,7 @@ AC_PROG_CXX
 
 # Checks for libraries.
 AC_PROG_RANLIB
+AC_CHECK_LIB(pthread, pthread_self)
 
 # Checks for header files.
 
@@ -21,6 +22,24 @@ AC_C_CONST
 AC_C_INLINE
 
 # Checks for library functions.
+
+# check whether strerror_r is GNU or posix
+AC_MSG_CHECKING([for GNU strerror_r])
+AC_TRY_RUN([
+
+#include <string.h>
+
+main() {
+   char buffer[80];
+   const char *error = strerror_r(0, buffer, sizeof(buffer));
+   exit(strcmp(error, strerror(0)));
+}
+],
+   AC_DEFINE(HAVE_GNU_STRERROR, 1, [use gnu style strerror_r])
+   AC_MSG_RESULT(yes)
+,
+   AC_MSG_RESULT(no)
+)
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

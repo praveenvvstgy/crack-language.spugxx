@@ -29,6 +29,10 @@
 #include "NativeMarshaller.h"
 #include "Socket.h"
 #include "TypeInfo.h"
+#include "StringFmt.h"
+#include "Mutex.h"
+#include "Locker.h"
+#include "SystemException.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -310,6 +314,31 @@ main() {
       strcmp(inBuf, outBuf);
       if (strcmp(inBuf, outBuf))
          FAIL("buffers do not match");
+   END_TEST(true)
+
+   BEGIN_TEST("string formatting")
+   END_TEST(SPUG_FSTR("this is " << "a test") == "this is a test")
+
+   BEGIN_TEST("useless mutex test")
+      Mutex m;
+      m.acquire();
+      m.release();
+   END_TEST(true)
+
+   BEGIN_TEST("system exceptions")
+      SystemException ex(0, "test message");
+      std::string temp = "test message: ";
+      temp += strerror(0);
+   END_TEST(temp == ex.getMessage())
+
+   BEGIN_TEST("mutex locker")
+      Mutex m(false);
+      {
+         Locker lk(m);
+      }
+      // will hang if we haven't released
+      m.acquire();
+      m.release();
    END_TEST(true)
 
 #if 0

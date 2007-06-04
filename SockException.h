@@ -29,6 +29,7 @@ namespace spug {
 
 /**
  * Raised when a socket error occurs.
+ * @todo should be deriving from SystemException
  */
 class SockException : public Exception {
    

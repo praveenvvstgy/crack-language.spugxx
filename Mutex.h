@@ -2,9 +2,7 @@
 
    $Id$
 
-   Basic, non-class, type definitions.
-
-   Copyright (C) 2006 Michael A. Muller
+   Copyright (C) 2007 Michael A. Muller
 
    Permission is granted to use, modify and redistribute this code,
    providing that the following conditions are met:
@@ -20,21 +18,36 @@
 
 \*===========================================================================*/
 
-#ifndef SPUG_TYPES_H
-#define SPUG_TYPES_H
+#ifndef SPUG_MUTEX_H
+#define SPUG_MUTEX_H
+
+#include <pthread.h>
 
 namespace spug {
 
-namespace Const {
-   enum {
-      // buffer big enough for the output of strerror_r
-      errorBufferSize = 256
-   };
-}
+/** Mutual exclusion lock */
+class Mutex {
+   private:
+      pthread_mutex_t mutex;
 
-typedef unsigned char Byte;
-typedef short Int16;
+      Mutex(const Mutex &other);
 
-}
+   public:
+      /**
+       * @param recursive create a recursive mutex - one that can be locked
+       *                  multiple times within the same thread
+       */
+      Mutex(bool recursive = true);
+
+      ~Mutex();
+
+      /** Acquire the mutex, wait for it if it is already locked.  */
+      void acquire();
+
+      /** Release the mutex. */
+      void release();
+};
+
+} // namespace spug
 
 #endif

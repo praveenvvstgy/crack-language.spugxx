@@ -2,9 +2,7 @@
 
    $Id$
 
-   Basic, non-class, type definitions.
-
-   Copyright (C) 2006 Michael A. Muller
+   Copyright (C) 2007 Michael A. Muller
 
    Permission is granted to use, modify and redistribute this code,
    providing that the following conditions are met:
@@ -20,21 +18,35 @@
 
 \*===========================================================================*/
 
-#ifndef SPUG_TYPES_H
-#define SPUG_TYPES_H
+#ifndef SPUG_LOCKER_H
+#define SPUG_LOCKER_H
+
+#include "Mutex.h"
+#include <stdlib.h>
 
 namespace spug {
 
-namespace Const {
-   enum {
-      // buffer big enough for the output of strerror_r
-      errorBufferSize = 256
-   };
-}
+/**
+ * Locks a mutex when constructed, releases when destroyed.
+ */
+class Locker {
+   private:
+      Mutex &mutex;
 
-typedef unsigned char Byte;
-typedef short Int16;
+   public:
+      Locker(Mutex &mutex) : mutex(mutex) {
+         mutex.acquire();
+      }
 
-}
+      ~Locker() {
+         try {
+            mutex.release();
+         } catch (...) {
+            abort();
+         }
+      }
+};
+
+} // namespace spug
 
 #endif

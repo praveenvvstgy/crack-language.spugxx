@@ -1,10 +1,6 @@
 /*===========================================================================*\
 
-   $Id$
-
-   Basic, non-class, type definitions.
-
-   Copyright (C) 2006 Michael A. Muller
+   Copyright (C) 2007 Michael A. Muller
 
    Permission is granted to use, modify and redistribute this code,
    providing that the following conditions are met:
@@ -20,21 +16,21 @@
 
 \*===========================================================================*/
 
-#ifndef SPUG_TYPES_H
-#define SPUG_TYPES_H
+#include "SystemException.h"
 
-namespace spug {
+#include "config.h"
 
-namespace Const {
-   enum {
-      // buffer big enough for the output of strerror_r
-      errorBufferSize = 256
-   };
-}
+using namespace spug;
 
-typedef unsigned char Byte;
-typedef short Int16;
-
-}
-
+std::string SystemException::getMessage() const {
+   char errorBuffer[80];
+   const char *errorMsg;
+#ifdef HAVE_GNU_STRERROR
+   errorMsg = strerror_r(errorCode, errorBuffer, sizeof(errorBuffer));
+#else
+   errorMsg = errorBuffer;
+   strerror_r(errorCode, errorBuffer, sizeof(errorBuffer));
 #endif
+
+   return msg + ": " + errorMsg;
+}
