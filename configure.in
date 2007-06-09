@@ -25,9 +25,12 @@ AC_C_INLINE
 
 # check whether strerror_r is GNU or posix
 AC_MSG_CHECKING([for GNU strerror_r])
+AC_LANG_CPLUSPLUS
 AC_TRY_RUN([
 
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 main() {
    char buffer[80];
