@@ -13,7 +13,7 @@ include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    Marshallable.h Marshaller.h NativeMarshaller.h TypeInfo.h String.h \
    UnsupportedOperationException.h OutOfRangeException.h \
    Logger.h DoesNotExistException.h StringFmt.h SystemException.h Mutex.h \
-   Locker.h InvalidStateException.h
+   Locker.h InvalidStateException.h StronglyTypedScalar.h
 
 # XXX we apologize for the very lame release tarball generator
 
