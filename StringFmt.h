@@ -55,6 +55,6 @@ namespace spug {
 }
 
 #define SPUG_FSTR(msg) \
-      static_cast<const std::ostringstream&>(StringFmt() << msg).str()
+      static_cast<const std::ostringstream&>(spug::StringFmt() << msg).str()
 
 #endif
