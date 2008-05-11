@@ -33,6 +33,7 @@
 #include "Mutex.h"
 #include "Locker.h"
 #include "SystemException.h"
+#include "OwningByteBuf.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -112,6 +113,17 @@ class TestCharIterImpl : public CharIterImpl {
 	 destructed = true;
       }
 };
+
+// override global delete
+typedef std::map<void *, bool> FreeMap;
+FreeMap *freeMap = 0;
+void operator delete(void *ptr) {
+   // XXX should probably either delete _or_ store, then cleanup later.
+   if (freeMap) {
+      (*freeMap)[ptr] = true;
+   }
+   free(ptr);
+}
 
 main() {
    RCBase obj;
@@ -340,6 +352,21 @@ main() {
       m.acquire();
       m.release();
    END_TEST(true)
+   
+   BEGIN_TEST("OwningByteBuf")
+      freeMap = new FreeMap;
+      Byte *allocated = new Byte[10];
+      Byte copied[6] = "hello";
+      {
+         OwningByteBuf buf = OwningByteBuf::wrap(10, allocated);
+         OwningByteBuf copiedBuf(sizeof(copied), copied);
+         if (memcmp(copiedBuf.buffer, copied, sizeof(copied)) ||
+             copiedBuf.size != sizeof(copied))
+             FAIL("Copied buffer differs from original");
+      }
+   END_TEST(freeMap->find(allocated) != freeMap->end() &&
+            freeMap->find(copied) == freeMap->end())
+   freeMap = 0;
 
 #if 0
       assert(m.done());
