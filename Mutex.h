@@ -1,21 +1,22 @@
 /*===========================================================================*\
-
-   $Id$
-
-   Copyright (C) 2007 Michael A. Muller
-
-   Permission is granted to use, modify and redistribute this code,
-   providing that the following conditions are met:
+     
+    Copyright (C) 2007 Michael A. Muller
  
-   1) This copyright/licensing notice must remain intact.
-   2) If the code is modified and redistributed, the modifications must 
-   include documentation indicating that the code has been modified.
-   3) The author(s) of this code must be indemnified and held harmless
-   against any damage resulting from the use of this code.
-
-   This code comes with ABSOLUTELY NO WARRANTEE, not even the implied 
-   warrantee of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-
+    This file is part of spug++.
+ 
+    spug++ is free software: you can redistribute it and/or modify it under the 
+    terms of the GNU Lesser General Public License as published by the Free 
+    Software Foundation, either version 3 of the License, or (at your option) 
+    any later version.
+ 
+    spug++ is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+ 
+    You should have received a copy of the GNU Lesser General Public License 
+    along with spug++.  If not, see <http://www.gnu.org/licenses/>.
+ 
 \*===========================================================================*/
 
 #ifndef SPUG_MUTEX_H
