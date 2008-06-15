@@ -1,3 +1,24 @@
+#==============================================================================
+#    
+#   Copyright (C) 2008 Michael A. Muller
+#
+#   This file is part of spug++.
+#
+#   spug++ is free software: you can redistribute it and/or modify it under the 
+#   terms of the GNU Lesser General Public License as published by the Free 
+#   Software Foundation, either version 3 of the License, or (at your option) 
+#   any later version.
+#
+#   spug++ is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License 
+#   along with spug++.  If not, see <http://www.gnu.org/licenses/>.
+#
+#==============================================================================
+
 ## Process this file with automake to produce Makefile.in
 noinst_PROGRAMS = tester
 lib_LIBRARIES = libspug++.a
@@ -14,19 +35,9 @@ include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    UnsupportedOperationException.h OutOfRangeException.h \
    Logger.h DoesNotExistException.h StringFmt.h SystemException.h Mutex.h \
    Locker.h InvalidStateException.h StronglyTypedScalar.h OwningByteBuf.h \
-   ByteBuf.h
-
-# XXX we apologize for the very lame release tarball generator
-
-VER := $(shell svn info | awk '/^Revision:/ { print $$2; }')
-
-tarball:
-	svn export -r $(VER) $(svn)/trunk/spug++ spug++-$(VER)
-	(cd spug++-$(VER); \
-		rm *.d CntPtr.* PtrSList.h Ptrs.h mxfile Makefile.org; \
-		./bootstrap)
-	tar -cvzf spug++-$(VER).tar.gz spug++-$(VER)
-	rm -rf spug++-$(VER)
+   ByteBuf.h Socket.h InetAddress.h SockException.h LPtr.h
+noinst_HEADERS = TestMarshaller.h
+EXTRA_DIST = testdata spug++.m4
 
 install-autoconf:
 	$(INSTALL) -d $(prefix)/share/aclocal
