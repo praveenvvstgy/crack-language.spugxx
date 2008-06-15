@@ -20,6 +20,7 @@
 
 #include "RCPtr.h"
 #include "RCBase.h"
+#include "LPtr.h"
 #include "Exception.h"
 #include "Tracer.h"
 #include "FileReader.h"
@@ -367,6 +368,28 @@ main() {
    END_TEST(freeMap->find(allocated) != freeMap->end() &&
             freeMap->find(copied) == freeMap->end())
    freeMap = 0;
+
+   BEGIN_TEST("Basic LPtrs")
+      bool deleted = false;
+      {
+	 LPtr<Tester> a = new Tester(deleted);
+
+	 // just verify that we can access members
+	 a->deleted;
+
+	 // verify that we can dererference
+	 (*a).deleted;
+
+	 LPtr<Tester> b = a;
+	 a = b;
+
+	 // implicit assignment to a raw pointer
+	 Tester *raw = a;
+
+	 // pass through the raw pointer to another LPtr
+	 LPtr<Tester> c = raw;
+      }
+   END_TEST(deleted)
 
 #if 0
       assert(m.done());
