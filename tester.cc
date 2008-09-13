@@ -361,15 +361,24 @@ main() {
       freeMap = new FreeMap;
       Byte *allocated = new Byte[10];
       Byte copied[6] = "hello";
+      Byte assigned[6] = "hello";
+      strcpy((char *)assigned, "hello");
       {
          OwningByteBuf buf = OwningByteBuf::wrap(10, allocated);
          OwningByteBuf copiedBuf(sizeof(copied), copied);
          if (memcmp(copiedBuf.buffer, copied, sizeof(copied)) ||
              copiedBuf.size != sizeof(copied))
              FAIL("Copied buffer differs from original");
+             
+         OwningByteBuf assignedBuf;
+         ByteBuf rval(sizeof(assigned), assigned);
+         assignedBuf = rval;
+         if (memcmp(assignedBuf.buffer, assigned, rval.size))
+            FAIL("Assigned buffer differs from original");
       }
    END_TEST(freeMap->find(allocated) != freeMap->end() &&
-            freeMap->find(copied) == freeMap->end())
+            freeMap->find(copied) == freeMap->end() &&
+            freeMap->find(assigned) == freeMap->end())
    freeMap = 0;
 
    BEGIN_TEST("Basic LPtrs")

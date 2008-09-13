@@ -50,6 +50,8 @@ class OwningByteBuf : public ByteBuf {
 
     public:
         
+        OwningByteBuf() {}
+        
         /**
          * Construct from a buffer size and a raw buffer.  The raw buffer data 
          * will be copied - it will remain the responsibility of the caller to 
@@ -65,6 +67,12 @@ class OwningByteBuf : public ByteBuf {
         
         ~OwningByteBuf() {
             delete buffer;
+        }
+        
+        OwningByteBuf & operator =(const ByteBuf &other) {
+            if (buffer) delete [] buffer;
+            buffer = dup(other.size, other.buffer);
+            size = other.size;
         }
 
         /**
