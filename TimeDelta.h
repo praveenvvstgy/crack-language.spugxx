@@ -94,14 +94,16 @@ struct TimeDelta {
         }
     
         /** Return the number of millisec in the time delta. */
-        int getMillis() const {
+        int toMillis() const {
             return sec * 1000 + usec / 1000;
         }
         
+        /** Returns the seconds component of the delta. */
         int getSeconds() {
             return sec;
         }
         
+        /** Returns the microseconds component of the delta. */
         int getMicroseconds() {
             return usec;
         }
