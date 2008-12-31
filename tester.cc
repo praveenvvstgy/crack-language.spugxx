@@ -32,6 +32,7 @@
 #include "TestMarshaller.h"
 #include "NativeMarshaller.h"
 #include "Socket.h"
+#include "Time.h"
 #include "TypeInfo.h"
 #include "StringFmt.h"
 #include "Mutex.h"
@@ -88,6 +89,8 @@ SPUG_EXCEPTION(Fail)
    }
 
 #define FAIL(msg) throw Fail(msg);
+#define ASSERT_EQUALS(expect, actual) \
+   if ((expect) != (actual)) throw Fail(#expect " != " #actual);
 
 class Tester : public RCBase {
    public:
@@ -402,6 +405,37 @@ main() {
 	 LPtr<Tester> c = raw;
       }
    END_TEST(deleted)
+
+   BEGIN_TEST("TimeDelta")
+      TimeDelta td1(100, 200);
+      ASSERT_EQUALS(td1.getSeconds(), 100)
+      ASSERT_EQUALS(td1.getMicroseconds(), 200)
+
+      TimeDelta td2(100);
+      ASSERT_EQUALS(td2.getSeconds(), 100)
+      ASSERT_EQUALS(td2.getMicroseconds(), 0)
+      
+      // test normalizations
+      ASSERT_EQUALS(TimeDelta(0, 1000000), TimeDelta(1, 0))
+      ASSERT_EQUALS(TimeDelta(0, -1000000), TimeDelta(-1, 0))
+      ASSERT_EQUALS(TimeDelta(1, -500000), TimeDelta(0, 500000))
+      ASSERT_EQUALS(TimeDelta(-1, 500000), TimeDelta(0, -500000))
+      
+      // test addition and subtraction
+      ASSERT_EQUALS(td1 - td2, TimeDelta(0, 200))
+      ASSERT_EQUALS(td1 + td2, TimeDelta(200, 200))
+      ASSERT_EQUALS(td2 - td1, TimeDelta(0, -200))
+      ASSERT_EQUALS(TimeDelta(1, 1234).getMillis(), 1001)
+      
+      // test streaming
+      ASSERT_EQUALS(SPUG_FSTR(TimeDelta(1, 0)), "1.000000");
+      ASSERT_EQUALS(SPUG_FSTR(TimeDelta(-1, 0)), "-1.000000");
+      ASSERT_EQUALS(SPUG_FSTR(TimeDelta(-1, -100000)), "-1.100000");
+      ASSERT_EQUALS(SPUG_FSTR(TimeDelta(1, 100000)), "1.100000");
+      
+      Time t = Time::now();
+      // can't test now() without dependency injection...
+   END_TEST(true)   
 
 #if 0
       assert(m.done());
