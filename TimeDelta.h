@@ -29,9 +29,11 @@
 namespace spug {
 
 /**
- * TimeDelta is a difference between two points in time.
+ * TimeDelta is a difference between two points in time.  It consists of a 
+ * seconds component and a microseconds component.
  */
 struct TimeDelta {
+
     private:
         // seconds
         int sec;
@@ -63,8 +65,19 @@ struct TimeDelta {
     public:
         friend 
             std::ostream &operator <<(std::ostream &out, const TimeDelta &td);
+
+        /** Creates a time delta of zero. */
         TimeDelta() : sec(0), usec(0) {}
+        
+        /** Creates a time delta of the specified number of seconds. */
         TimeDelta(int sec) : sec(sec), usec(0) {}
+        
+        /** 
+         * Creates a time delta of the specified combination of seconds and 
+         * milliseconds.  Normalizes the values so that the two components are 
+         * always of the same sign and so that microseconds is never greater 
+         * than one million or less than negative one million.
+         */
         TimeDelta(int sec, int usec) : sec(sec), usec(usec) {
             normalize();
         }
@@ -99,12 +112,12 @@ struct TimeDelta {
         }
         
         /** Returns the seconds component of the delta. */
-        int getSeconds() {
+        int getSeconds() const {
             return sec;
         }
         
         /** Returns the microseconds component of the delta. */
-        int getMicroseconds() {
+        int getMicroseconds() const {
             return usec;
         }
         
