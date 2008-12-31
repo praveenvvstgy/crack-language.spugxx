@@ -425,7 +425,7 @@ main() {
       ASSERT_EQUALS(td1 - td2, TimeDelta(0, 200))
       ASSERT_EQUALS(td1 + td2, TimeDelta(200, 200))
       ASSERT_EQUALS(td2 - td1, TimeDelta(0, -200))
-      ASSERT_EQUALS(TimeDelta(1, 1234).getMillis(), 1001)
+      ASSERT_EQUALS(TimeDelta(1, 1234).toMillis(), 1001)
       
       // test streaming
       ASSERT_EQUALS(SPUG_FSTR(TimeDelta(1, 0)), "1.000000");
