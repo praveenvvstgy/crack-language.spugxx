@@ -27,7 +27,7 @@ tester_SOURCES = tester.cc TestMarshaller.cc
 tester_LDADD = libspug++.a
 libspug___a_SOURCES = Tracer.cc FileReader.cc NativeMarshaller.cc \
    Marshallable.cc Socket.cc InetAddress.cc SockException.cc \
-   SystemException.cc Mutex.cc OwningByteBuf.cc
+   SystemException.cc Mutex.cc Time.cc OwningByteBuf.cc
 include_spugdir = $(prefix)/include/spug
 include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    FileReader.h types.h Iterator.h IteratorImpl.h STLIteratorImpl.h casts.h \
@@ -35,7 +35,7 @@ include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
    UnsupportedOperationException.h OutOfRangeException.h \
    Logger.h DoesNotExistException.h StringFmt.h SystemException.h Mutex.h \
    Locker.h InvalidStateException.h StronglyTypedScalar.h OwningByteBuf.h \
-   ByteBuf.h Socket.h InetAddress.h SockException.h LPtr.h
+   ByteBuf.h Socket.h Time.h TimeDelta.h InetAddress.h SockException.h LPtr.h
 noinst_HEADERS = TestMarshaller.h
 EXTRA_DIST = testdata spug++.m4
 
