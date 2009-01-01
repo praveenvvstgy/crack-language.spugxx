@@ -32,8 +32,10 @@
 #include "TestMarshaller.h"
 #include "NativeMarshaller.h"
 #include "Socket.h"
+#include "Thread.h"
 #include "Time.h"
 #include "TypeInfo.h"
+#include "Runnable.h"
 #include "StringFmt.h"
 #include "Mutex.h"
 #include "Locker.h"
@@ -120,6 +122,19 @@ class TestCharIterImpl : public CharIterImpl {
 	 destructed = true;
       }
 };
+
+struct ThreadTester : public Runnable {
+   bool val;
+   
+   ThreadTester() : val(false) {}
+      
+   virtual void run() {
+      val = true;
+   }
+};
+
+SPUG_LPTR(ThreadTester);
+         
 
 // override global delete
 typedef std::map<void *, bool> FreeMap;
@@ -436,6 +451,15 @@ main() {
       Time t = Time::now();
       // can't test now() without dependency injection...
    END_TEST(true)   
+   
+   BEGIN_TEST("Thread")
+      ThreadTesterLPtr tester = new ThreadTester();
+      Thread thread(tester);
+      thread.incref();
+      thread.start();
+      thread.join();
+      ASSERT_EQUALS(tester->val, true);
+   END_TEST(true)
 
 #if 0
       assert(m.done());
@@ -446,4 +470,5 @@ main() {
 
    return failCount > 0;
 }
+
 
