@@ -30,16 +30,17 @@ namespace spug {
 /**
  * Locks a mutex when constructed, releases when destroyed.
  */
-class Locker {
+template<class T>
+class GenericLocker {
    private:
-      Mutex &mutex;
+      T &mutex;
 
    public:
-      Locker(Mutex &mutex) : mutex(mutex) {
+      GenericLocker(T &mutex) : mutex(mutex) {
          mutex.acquire();
       }
 
-      ~Locker() {
+      ~GenericLocker() {
          try {
             mutex.release();
          } catch (...) {
@@ -47,6 +48,11 @@ class Locker {
          }
       }
 };
+
+class Condition;
+
+typedef GenericLocker<Mutex> Locker;
+typedef GenericLocker<Condition> ConditionLocker;
 
 } // namespace spug
 
