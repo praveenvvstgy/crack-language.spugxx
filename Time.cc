@@ -22,11 +22,31 @@
 #include <sys/time.h>
 #include <time.h>
 #include "Time.h"
+#include "TimeDelta.h"
 
 using namespace spug;
+
+Time Time::operator +(const TimeDelta &other) const {
+    Time result = *this;
+    result.add(other);
+    return result;
+}
+
+Time Time::operator -(const TimeDelta &other) const {
+    Time result = *this;
+    result.subtract(other);
+    return result;
+}
+
+TimeDelta Time::operator -(const Time &other) const {
+    Time result(*this);
+    result.subtract(other);
+    return TimeDelta(result.sec, result.usec);
+}
 
 Time Time::now() {
     timeval tv;
     gettimeofday(&tv, 0);
     return Time(tv.tv_sec, tv.tv_usec);
 }
+

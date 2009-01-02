@@ -22,17 +22,24 @@
 #ifndef SPUG_TIME_H
 #define SPUG_TIME_H
 
-#include "TimeDelta.h"
+#include "TimeBase.h"
 
 namespace spug {
+
+class TimeDelta;
 
 /**
  * Instances of this class define a point in time.
  */
-struct Time : public TimeDelta {
+struct Time : public TimeBase {
     Time() {}
-    Time(int sec) : TimeDelta(sec) {}
-    Time(int sec, unsigned usec) : TimeDelta(sec, usec) {}
+    Time(int sec) : TimeBase(sec) {}
+    Time(int sec, unsigned usec) : TimeBase(sec, usec) {}
+    
+    Time operator +(const TimeDelta &other) const;
+    Time operator -(const TimeDelta &other) const;
+    TimeDelta operator -(const Time &other) const;
+    
     static Time now();
 };
 
