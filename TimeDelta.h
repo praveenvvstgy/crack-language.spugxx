@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip>
+#include "TimeBase.h"
 
 namespace spug {
 
@@ -32,45 +33,14 @@ namespace spug {
  * TimeDelta is a difference between two points in time.  It consists of a 
  * seconds component and a microseconds component.
  */
-struct TimeDelta {
-
-    private:
-        // seconds
-        int sec;
-        
-        // microseconds
-        int usec;
-
-        void normalize() {
-            
-            // convert u-sec overflow into seconds
-            if (usec >= 1000000) {
-                usec -= 1000000;
-                ++sec;
-            } else if (usec <= -1000000) {
-                usec += 1000000;
-                --sec;
-            }
-            
-            // make sure the signs are compatible
-            if (usec < 0 && sec > 0) {
-                usec = 1000000 + usec;
-                --sec;
-            } else if (usec > 0 && sec < 0) {
-                usec = -1000000 + usec;
-                ++sec;
-            }
-        }
+struct TimeDelta : public TimeBase {
 
     public:
-        friend 
-            std::ostream &operator <<(std::ostream &out, const TimeDelta &td);
-
         /** Creates a time delta of zero. */
-        TimeDelta() : sec(0), usec(0) {}
+        TimeDelta() {}
         
         /** Creates a time delta of the specified number of seconds. */
-        TimeDelta(int sec) : sec(sec), usec(0) {}
+        TimeDelta(int sec) : TimeBase(sec) {}
         
         /** 
          * Creates a time delta of the specified combination of seconds and 
@@ -78,56 +48,24 @@ struct TimeDelta {
          * always of the same sign and so that microseconds is never greater 
          * than one million or less than negative one million.
          */
-        TimeDelta(int sec, int usec) : sec(sec), usec(usec) {
-            normalize();
-        }
+        TimeDelta(int sec, int usec) : TimeBase(sec, usec) {}
     
         TimeDelta operator -(const TimeDelta &other) const {
-            TimeDelta result;
-            result.sec = sec - other.sec;
-            result.usec = usec - other.usec;
-            result.normalize();
+            TimeDelta result = *this;
+            result.subtract(other);
             return result;
         }
         
         TimeDelta operator +(const TimeDelta &other) const {
-            TimeDelta result;
-            result.sec = sec + other.sec;
-            result.usec = usec + other.usec;
-            result.normalize();
+            TimeDelta result = *this;
+            result.add(other);
             return result;
         }
         
-        bool operator ==(const TimeDelta &other) {
-            return sec == other.sec && usec == other.usec;
+        Time operator +(const Time &other) const {
+            return other + *this;
         }
-        
-        bool operator !=(const TimeDelta &other) {
-            return sec != other.sec || usec != other.usec;
-        }
-    
-        /** Return the number of millisec in the time delta. */
-        int toMillis() const {
-            return sec * 1000 + usec / 1000;
-        }
-        
-        /** Returns the seconds component of the delta. */
-        int getSeconds() const {
-            return sec;
-        }
-        
-        /** Returns the microseconds component of the delta. */
-        int getMicroseconds() const {
-            return usec;
-        }
-        
 };
-
-inline std::ostream &operator <<(std::ostream &out, const TimeDelta &td) {
-    if (!td.sec && td.usec < 0) out << '-';
-    out << td.sec << "." << std::setw(6) << std::setfill('0') << abs(td.usec);
-    return out;
-}
 
 } // namespace spug
 
