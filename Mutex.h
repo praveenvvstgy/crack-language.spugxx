@@ -26,6 +26,8 @@
 
 namespace spug {
 
+class Condition;
+
 /** Mutual exclusion lock */
 class Mutex {
    private:
@@ -34,6 +36,8 @@ class Mutex {
       Mutex(const Mutex &other);
 
    public:
+      friend class Condition;
+
       /**
        * @param recursive create a recursive mutex - one that can be locked
        *                  multiple times within the same thread
