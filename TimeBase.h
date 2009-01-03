@@ -102,6 +102,22 @@ struct TimeBase {
         bool operator !=(const TimeBase &other) {
             return sec != other.sec || usec != other.usec;
         }
+        
+        bool operator >(const TimeBase &other) {
+            return sec > other.sec || usec > other.usec;
+        }
+    
+        bool operator >=(const TimeBase &other) {
+            return sec >= other.sec || usec >= other.usec;
+        }
+    
+        bool operator <(const TimeBase &other) {
+            return sec < other.sec || usec < other.usec;
+        }
+    
+        bool operator <=(const TimeBase &other) {
+            return sec <= other.sec || usec <= other.usec;
+        }
     
         /** Return the number of millisec in the time delta. */
         int toMillis() const {
