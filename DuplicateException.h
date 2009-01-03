@@ -19,23 +19,18 @@
  
 \*===========================================================================*/
 
-#ifndef SPUG_RUNNABLE_H
-#define SPUG_RUNNABLE_H
+#ifndef SPUG_DUPLICATEEXCEPTION_H
+#define SPUG_DUPLICATEEXCEPTION_H
 
-#include "LPtr.h"
-#include "RCBase.h"
+#include "Exception.h"
 
 namespace spug {
 
-SPUG_LPTR(Runnable);
-
 /**
- * Interface for an object with a run method.
+ * Thrown when an object identified by a parameter is already a member of the 
+ * set that it is being added to.
  */
-class Runnable : public RCBase {
-    public:
-        virtual void run() = 0;
-};
+SPUG_EXCEPTION(DuplicateException)
 
 } // namespace spug
 

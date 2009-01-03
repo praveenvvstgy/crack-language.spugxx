@@ -30,11 +30,15 @@
 #include "Iterator.h"
 #include "STLIteratorImpl.h"
 #include "TestMarshaller.h"
+#include "Condition.h"
 #include "NativeMarshaller.h"
 #include "Socket.h"
 #include "Thread.h"
 #include "Time.h"
+#include "TimeDelta.h"
 #include "TypeInfo.h"
+#include "Reactable.h"
+#include "Reactor.h"
 #include "Runnable.h"
 #include "StringFmt.h"
 #include "Mutex.h"
@@ -45,6 +49,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
+#include <errno.h>
 
 using namespace std;
 using namespace spug;
@@ -135,6 +140,87 @@ struct ThreadTester : public Runnable {
 
 SPUG_LPTR(ThreadTester);
          
+struct TestReactable : public Reactable {
+
+   int fd;   
+   string lastRead;
+   string nextWrite;
+   Reactable::Status status;
+   Condition cond;
+   
+   TestReactable(int fileno, Reactable::Status status) : 
+      fd(fileno), 
+      status(status) {
+   }
+
+   virtual Reactable::Status getStatus() { return status; }
+
+   virtual int fileno() {
+      return fd;
+   }
+
+   virtual void handleRead(Reactor &reactor) {
+      char buffer[1024];
+      int rc = ::read(fd, buffer, 1024);
+      if (rc < 0) {
+         throw SystemException(errno, "read");
+      } else if (rc == 0) {
+         handleDisconnect(reactor);
+         return;
+      }
+      ConditionLocker locker(cond);
+      lastRead = string(buffer, rc);
+      cond.notify();
+   }
+   
+   virtual void handleWrite(Reactor &reactor) {
+      ConditionLocker locker(cond);
+      ::write(fd, nextWrite.data(), nextWrite.size());
+   }
+   
+   virtual void handleDisconnect(Reactor &reactor) {
+      reactor.removeReactable(this);
+      fd = 0;
+   }
+   
+   virtual void handleError(Reactor &reactor) {
+      logger << "handleError called." << endl;
+   }
+   
+};
+
+SPUG_LPTR(TestReactable);  
+
+struct TestReactableThread : public Runnable {
+   TestReactableLPtr reactable;
+   RunnableLPtr event;
+
+   TestReactableThread(TestReactable *reactable, Runnable *event) : 
+      reactable(reactable),
+      event(event) {
+   }
+
+   virtual void run() {
+      ReactorLPtr reactor = Reactor::createReactor();
+      reactor->addReactable(reactable);
+      reactor->schedule(TimeDelta(0, 100000), event);
+      reactor->run();
+   }
+};   
+
+struct Event : public Runnable {
+   bool triggered;
+   Condition cond;
+   
+   Event() : triggered(false) {}
+
+   virtual void run() {
+      ConditionLocker lock(cond);
+      triggered = true;
+      cond.notify();
+   }
+};
+
 
 // override global delete
 typedef std::map<void *, bool> FreeMap;
@@ -460,6 +546,54 @@ main() {
       thread.join();
       ASSERT_EQUALS(tester->val, true);
    END_TEST(true)
+
+   BEGIN_TEST("Reactor")
+   
+      // create a pipe
+      int fds[2];
+      ASSERT_EQUALS(pipe(fds), 0);
+      
+      LPtr<Event> event = new Event();
+
+      // create the reactable and runnable
+      TestReactableLPtr reactable = 
+         new TestReactable(fds[0], Reactable::readyToRead);
+      TestReactableThread runnable(reactable, event);
+      runnable.incref();
+
+      // create and start the reactor thread
+      Thread thread(&runnable);
+      thread.incref();
+      thread.start();
+      
+      // guarantee that the write end of the pipe gets closed no matter what 
+      // happens.
+      struct Closer {
+         int fd;
+         Closer(int fd) : fd(fd) {}
+         ~Closer() {
+            close(fd);
+         }
+      } closer(fds[1]);
+      
+      write(fds[1], "read data", 9);
+      {
+         ConditionLocker locker(reactable->cond);
+         if (reactable->lastRead != "read data")
+            ASSERT_EQUALS(reactable->cond.wait(TimeDelta(1)), true);
+         ASSERT_EQUALS(reactable->lastRead, "read data");
+      }
+      
+      // wait for the scheduled event.
+      {
+         ConditionLocker locker(event->cond);
+         if (!event->triggered)
+            ASSERT_EQUALS(event->cond.wait(TimeDelta(1)), true);
+         ASSERT_EQUALS(event->triggered, true);
+      }
+
+   END_TEST(true)
+      
 
 #if 0
       assert(m.done());

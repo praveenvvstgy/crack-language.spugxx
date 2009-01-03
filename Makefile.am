@@ -25,17 +25,19 @@ lib_LIBRARIES = libspug++.a
 TESTS = tester
 tester_SOURCES = tester.cc TestMarshaller.cc
 tester_LDADD = libspug++.a
-libspug___a_SOURCES = Tracer.cc FileReader.cc NativeMarshaller.cc \
-   Marshallable.cc Socket.cc InetAddress.cc SockException.cc \
-   SystemException.cc Mutex.cc Thread.cc Time.cc OwningByteBuf.cc
+libspug___a_SOURCES = Condition.cc FileReader.cc NativeMarshaller.cc \
+   Marshallable.cc InetAddress.cc Mutex.cc Reactor.cc \
+   Socket.cc SockException.cc SystemException.cc Thread.cc Time.cc Tracer.cc \
+   OwningByteBuf.cc
 include_spugdir = $(prefix)/include/spug
-include_spug_HEADERS = RCBase.h RCPtr.h Exception.h Tracer.h Reader.h \
-   FileReader.h types.h Iterator.h IteratorImpl.h STLIteratorImpl.h casts.h \
-   Marshallable.h Marshaller.h NativeMarshaller.h TypeInfo.h String.h \
-   UnsupportedOperationException.h OutOfRangeException.h \
-   Logger.h DoesNotExistException.h StringFmt.h SystemException.h Mutex.h \
-   Locker.h InvalidStateException.h StronglyTypedScalar.h OwningByteBuf.h \
-   ByteBuf.h Runnable.h Socket.h Thread.h Time.h TimeDelta.h InetAddress.h \
+include_spug_HEADERS = Condition.h Exception.h RCBase.h RCPtr.h Reader.h \
+   Tracer.h FileReader.h types.h Iterator.h IteratorImpl.h \
+   STLIteratorImpl.h casts.h Marshallable.h Marshaller.h NativeMarshaller.h \
+   TypeInfo.h String.h UnsupportedOperationException.h \
+   OutOfRangeException.h Logger.h DoesNotExistException.h StringFmt.h \
+   SystemException.h Mutex.h Locker.h InvalidStateException.h \
+   StronglyTypedScalar.h OwningByteBuf.h ByteBuf.h Reactor.h Runnable.h \
+   Socket.h Thread.h Time.h TimeBase.h TimeDelta.h InetAddress.h \
    SockException.h LPtr.h
 noinst_HEADERS = TestMarshaller.h
 EXTRA_DIST = testdata spug++.m4
