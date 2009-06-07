@@ -484,6 +484,17 @@ main() {
             freeMap->find(copied) == freeMap->end() &&
             freeMap->find(assigned) == freeMap->end())
    freeMap = 0;
+   
+   BEGIN_TEST("OwningByteBuf default constructor")
+      char block[] = "failfailfail";
+      OwningByteBuf *buf = new(block) OwningByteBuf();
+   END_TEST(buf->buffer == 0)
+   
+   BEGIN_TEST("OwningByteBuf assignment.")
+      Byte *wrapped = new Byte[10];
+      OwningByteBuf buf;
+      buf.assign(10, wrapped);
+   END_TEST(buf.buffer == wrapped)
 
    BEGIN_TEST("Basic LPtrs")
       bool deleted = false;
