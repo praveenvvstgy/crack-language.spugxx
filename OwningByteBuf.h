@@ -65,14 +65,19 @@ class OwningByteBuf : public ByteBuf {
             ByteBuf(other.size, dup(other.size, other.buffer)) {
         }
         
+        OwningByteBuf(const OwningByteBuf &other) :
+            ByteBuf(other.size, dup(other.size, other.buffer)) {
+        }
+
         ~OwningByteBuf() {
-            delete buffer;
+            delete [] buffer;
         }
         
         OwningByteBuf & operator =(const ByteBuf &other) {
             if (buffer) delete [] buffer;
             buffer = dup(other.size, other.buffer);
             size = other.size;
+            return *this;
         }
 
         /**
@@ -84,6 +89,19 @@ class OwningByteBuf : public ByteBuf {
          */
         static OwningByteBuf wrap(size_t size, Byte *buffer) {
             return OwningByteBuf(size, buffer, true);
+        }
+        
+        /**
+         * Assign the buffer from an existing raw buffer, transferring 
+         * ownership of the buffer.
+         * @param size buffer size in bytes
+         * @param buffer raw buffer (will be owned by the owning buffer and 
+         *             deleted during destruction.
+         */
+        void assign(size_t newSize, Byte *newBuffer) {
+            if (buffer) delete [] buffer;
+            size = newSize;
+            buffer = newBuffer;
         }
 };
 
