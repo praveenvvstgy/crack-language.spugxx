@@ -466,6 +466,7 @@ main() {
       Byte *allocated = new Byte[10];
       Byte copied[6] = "hello";
       Byte assigned[6] = "hello";
+      Byte assignedFromBase[19] = "assigned from base";
       strcpy((char *)assigned, "hello");
       {
          OwningByteBuf buf = OwningByteBuf::wrap(10, allocated);
@@ -475,14 +476,21 @@ main() {
              FAIL("Copied buffer differs from original");
              
          OwningByteBuf assignedBuf;
-         ByteBuf rval(sizeof(assigned), assigned);
+         OwningByteBuf rval(sizeof(assigned), assigned);
          assignedBuf = rval;
          if (memcmp(assignedBuf.buffer, assigned, rval.size))
+            FAIL("Assigned buffer differs from original");
+            
+         OwningByteBuf assignedFromBaseBuf;
+         OwningByteBuf rval2(sizeof(assignedFromBase), assignedFromBase);
+         assignedFromBaseBuf = rval2;
+         if (memcmp(assignedFromBaseBuf.buffer, assignedFromBase, rval.size))
             FAIL("Assigned buffer differs from original");
       }
    END_TEST(freeMap->find(allocated) != freeMap->end() &&
             freeMap->find(copied) == freeMap->end() &&
-            freeMap->find(assigned) == freeMap->end())
+            freeMap->find(assigned) == freeMap->end() &&
+            freeMap->find(assignedFromBase) == freeMap->end())
    freeMap = 0;
    
    BEGIN_TEST("OwningByteBuf default constructor")
