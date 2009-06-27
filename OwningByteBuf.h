@@ -48,6 +48,16 @@ class OwningByteBuf : public ByteBuf {
             ByteBuf(size, buffer) {
         }
 
+        /**
+         * Copy the contents of another byte buffer.  This is the internal 
+         * method used by assignment operators.
+         */        
+        void copyFrom(const ByteBuf &other) {
+            if (buffer) delete [] buffer;
+            buffer = dup(other.size, other.buffer);
+            size = other.size;
+        }
+
     public:
         
         OwningByteBuf() {}
@@ -64,7 +74,7 @@ class OwningByteBuf : public ByteBuf {
         OwningByteBuf(const ByteBuf &other) :
             ByteBuf(other.size, dup(other.size, other.buffer)) {
         }
-        
+
         OwningByteBuf(const OwningByteBuf &other) :
             ByteBuf(other.size, dup(other.size, other.buffer)) {
         }
@@ -73,10 +83,13 @@ class OwningByteBuf : public ByteBuf {
             delete [] buffer;
         }
         
-        OwningByteBuf & operator =(const ByteBuf &other) {
-            if (buffer) delete [] buffer;
-            buffer = dup(other.size, other.buffer);
-            size = other.size;
+        ByteBuf & operator =(const ByteBuf &other) {
+            copyFrom(other);
+            return *this;
+        }
+
+        OwningByteBuf &operator =(const OwningByteBuf &other) {
+            copyFrom(other);
             return *this;
         }
 
