@@ -40,10 +40,11 @@ namespace spug {
  */
 template <class T>
 class RCPtr {
-   public:
-
+   private:
       // The raw pointer
       T *obj;
+
+   public:
 
       /** Copy constructor. */
       RCPtr(const RCPtr<T> &other) : obj(other.obj) {
@@ -58,8 +59,8 @@ class RCPtr {
       /** Construct from a derived class RCPtr */
       template <class U>
       RCPtr(const RCPtr<U> &other) : obj(0) {
-	 if (other.obj) {
-	    obj = dynamic_cast<T *>(other.obj);
+	 if (other.get()) {
+	    obj = dynamic_cast<T *>(other.get());
 	    if (!obj)
 	       throw std::bad_cast();
 	    else
@@ -94,31 +95,20 @@ class RCPtr {
       }
 
 
-      /** 
-       * Upcast an pointer to a derived class U to the base class pointer.
-       * This will fail at compile time if U is not derived from T.
+      /**
+       * Convenience function, equivalent to dynamic_cast<T>(other);
        */
       template <class U>
-      static const RCPtr<T> &ucast(const RCPtr<U> &other) {
-	 // let the compiler verify that T derives from U (and hopefully
-	 // optimize this away)
-	 T *dummy = other.obj;
-	 assert(reinterpret_cast<void *>(dummy) == 
-	         reinterpret_cast<void *>(other.obj)
-		);
-	 return *(reinterpret_cast<const RCPtr<T> *>(&other));
+      static T *cast(U *other) {
+         return dynamic_cast<T *>(other);
       }
 
       /**
-       * Downcast a pointer to a base class U to the derived class pointer.
-       * This will fail at runtime with a "std::bad_cast" exception if the
-       * referenced object is not a T instance.
+       * Convenience function, equivalent to dynamic_cast<T>(other.obj);
        */
       template <class U>
-      static const RCPtr<T> &dcast(const RCPtr<U> &other) {
-	 // again, let the system verify using a dynamic cast
-	 dynamic_cast<T&>(*other.obj);
-	 return *(reinterpret_cast<const RCPtr<T> *>(&other));
+      static T *rcast(const RCPtr<U> &other) {
+         return dynamic_cast<T *>(other.get());
       }
 
 #if 0
@@ -191,6 +181,13 @@ class RCPtr {
        */
       friend int operator ==(int ptr1, const RCPtr<T> &ptr2) {
 	 return (int)ptr2.obj == ptr1;
+      }
+      
+      /**
+       * Returns the underlying raw pointer.
+       */
+      T *get() const {
+         return obj;
       }
 
    };

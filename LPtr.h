@@ -85,6 +85,15 @@ class LPtr {
       T *operator ->() const {
 	 return obj;
       }
+
+      /**
+       * Convenience function, equivalent to dynamic_cast<T>(other);
+       */
+      template <class U>
+      static T *cast(U *other) {
+         return dynamic_cast<T>(other);
+      }
+
    };
 
 } // namespace spug

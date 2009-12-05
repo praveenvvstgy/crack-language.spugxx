@@ -109,7 +109,7 @@ class Tester : public RCBase {
 
 class NotTester : public RCBase {};
 
-void rcptr_func(const RCPtr<RCBase> &obj) {}
+void rcptr_func(RCBase *obj) {}
 
 typedef STLIteratorImpl<char, vector<char>, vector<char>::iterator> 
    CharIterImpl;
@@ -255,41 +255,28 @@ main() {
       bool deleted;
       RCPtr<Tester> tester = new Tester(deleted);
 //      rcptr_func(tester);
-      rcptr_func(RCPtr<RCBase>::ucast(tester));
+      rcptr_func(tester.get());
    END_TEST(true)
 
    BEGIN_TEST("assignment to base class");
       bool deleted;
       RCPtr<Tester> tester = new Tester(deleted);
       RCPtr<RCBase> base;
-      base = RCPtr<RCBase>::ucast(tester);
+      base = tester;
 //      base = tester;
-   END_TEST(tester->refcnt() == 2)
-
-   BEGIN_TEST("construction of base class pointer");
-      bool deleted;
-      RCPtr<Tester> tester = new Tester(deleted);
-      // XXX for some reason, this doesn't work if we use the equivalent "base
-      // = tester" form...
-      RCPtr<RCBase> base(RCPtr<RCBase>::ucast(tester));
    END_TEST(tester->refcnt() == 2)
 
    BEGIN_TEST("dynamic cast to derived class");
      bool deleted;
      RCPtr<RCBase> base = new Tester(deleted);
-     RCPtr<Tester> tester = RCPtr<Tester>::dcast(base);
-   END_TEST(tester->refcnt() == 2)
+     Tester *tester = RCPtr<Tester>::rcast(base);
+   END_TEST(tester && tester->refcnt() == 1)
 
    BEGIN_TEST("failing dynamic cast");
-      bool passed = false;
-      try {
-	bool deleted;
-	RCPtr<RCBase> base = new Tester(deleted);
-	RCPtr<NotTester> notTester = RCPtr<NotTester>::dcast(base);
-      } catch (const bad_cast &ex) {
-	 passed = true;
-      }
-   END_TEST(passed)
+     bool deleted;
+     RCPtr<RCBase> base = new Tester(deleted);
+     NotTester *notTester = RCPtr<NotTester>::rcast(base);
+   END_TEST(!notTester)
 
    BEGIN_TEST("basic exception construction and streaming");
       Exception ex("basic string");
