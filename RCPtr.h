@@ -78,16 +78,19 @@ class RCPtr {
       /** Copies another *RCPtrBase* to the receiver. */
       RCPtr<T> &operator =(const RCPtr<T> &other) {
 	 *this = other.obj;
+	 return *this;
       }
 
       /** Assigns a T* to the receiver. */
       RCPtr<T> &operator =(T *obj0) {
-	 // release the existing object
+	 // increment the new object, release the existing object.  The order is 
+	 // important, as the old object could reference the new one.
+	 if (obj0) obj0->incref();
 	 if (obj) obj->decref();
 
 	 // link to the new one
 	 obj = obj0;
-	 if (obj0) obj0->incref();
+	 return *this;
       }
 
 
