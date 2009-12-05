@@ -522,10 +522,21 @@ main() {
 	 Tester *raw = a;
 
 	 // pass through the raw pointer to another LPtr
-	 LPtr<Tester> c = raw;
+	 LPtr<Tester> c = raw;	 
       }
    END_TEST(deleted)
-
+   
+   BEGIN_TEST("LPtr assigning to existing object")
+      bool deleted = false;
+      {
+         LPtr<Tester> a = new Tester(deleted);
+	 // verify we don't delete when reassigning the same object
+	 a = a;
+	 if (deleted)
+	     FAIL("Deleted on assignment to self");
+      }
+   END_TEST(deleted)
+   
    BEGIN_TEST("TimeDelta")
       TimeDelta td1(100, 200);
       ASSERT_EQUALS(td1.getSeconds(), 100)
