@@ -104,11 +104,33 @@ class RCPtr {
       }
 
       /**
-       * Convenience function, equivalent to dynamic_cast<T>(other.obj);
+       * Like "cast()" but assert that the object is of the correct type.
+       * Null values will also fail.
+       */
+      template <class U>
+      static T *acast(U *other) {
+         T *result = dynamic_cast<T *>(other);
+         assert(result);
+         return result;
+      }
+
+      /**
+       * Convenience function, equivalent to dynamic_cast<T>(other.get());
        */
       template <class U>
       static T *rcast(const RCPtr<U> &other) {
          return dynamic_cast<T *>(other.get());
+      }
+
+      /**
+       * Like "rcast()" but assert that the object is of the correct type.
+       * Null values will also fail.
+       */
+      template <class U>
+      static T *arcast(const RCPtr<U> &other) {
+         T *result = dynamic_cast<T *>(other.get());
+         assert(result);
+         return result;
       }
 
 #if 0
