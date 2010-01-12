@@ -22,6 +22,7 @@
 #include "SystemException.h"
 
 #include "config.h"
+#include <cstring>
 
 using namespace spug;
 

@@ -25,6 +25,7 @@
 #define SPUG_RCPTR_H
 
 #include <iostream>
+#include <typeinfo>
 #include <exception>
 #include <assert.h>
 
@@ -162,7 +163,7 @@ class RCPtr {
 
       /** allows us to easily check for NULL in a conditional statement. */
       operator int() const {
-	 return (int)obj;
+	 return (obj != NULL);
       }
       
       /**

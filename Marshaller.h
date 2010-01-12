@@ -2,6 +2,7 @@
 #define SPUG_MARSHALLER_H
 
 #include "types.h"
+#include <string>
 
 namespace spug {
 
