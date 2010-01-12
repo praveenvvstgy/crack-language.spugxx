@@ -39,7 +39,7 @@ void Socket::initClient(int port) {
 Socket Socket::accept() const {
     sockaddr_in addr;
     size_t size = sizeof(addr);
-    int sock = ::accept(sockHandle, (sockaddr*)&addr, &size);
+    int sock = ::accept(sockHandle, (sockaddr*)&addr, (socklen_t *)&size);
     if (sock != -1)
         return Socket(sock, true, InetAddress((sockaddr&)addr, size),
   	              tcp
@@ -51,7 +51,7 @@ Socket Socket::accept() const {
 Socket *Socket::acceptAlloc() const {
     sockaddr_in addr;
     size_t size = sizeof(addr);
-    int sock = ::accept(sockHandle, (sockaddr*)&addr, &size);
+    int sock = ::accept(sockHandle, (sockaddr*)&addr, (socklen_t *)&size);
     if (sock != -1)
         return  new Socket(sock, true, InetAddress((sockaddr&)addr, size),
                            tcp

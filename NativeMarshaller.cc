@@ -2,6 +2,8 @@
 #include "NativeMarshaller.h"
 
 #include <string>
+#include <algorithm>
+#include <cstring>
 #include "TypeInfo.h"
 #include "InvalidStateException.h"
 
@@ -40,7 +42,7 @@ ostream &operator <<(ostream &out, const FmtBuf &buf) {
    out << hex << (buf.data[0] >> 4) << hex << (buf.data[0] & 0xF);
 
    // write the rest of the bytes (up to 10 of them)
-   for (i = 1; i < min(buf.size, 10u); ++i)
+   for (i = 1; i < min(buf.size, (size_t)10); ++i)
       out << ' ' << hex << (buf.data[i] >> 4) << hex << (buf.data[i] & 0xF);
 
    // if there were more than 10 bytes, add elipsis
@@ -50,7 +52,7 @@ ostream &operator <<(ostream &out, const FmtBuf &buf) {
    out << "] (\"";
 
    // write them as a string
-   for (i = 0; i < min(buf.size, 10u); ++i) {
+   for (i = 0; i < min(buf.size, (size_t)10); ++i) {
       Byte c = buf.data[i];
       if (c >= 32 && c <= 127 && c != '"' && c != '\\')
          cout << c;
