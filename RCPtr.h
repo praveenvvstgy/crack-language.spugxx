@@ -173,6 +173,14 @@ class RCPtr {
       int operator ==(const RCPtr<T> &other) const {
 	 return obj == other.obj;
       }
+      
+      int operator !=(const RCPtr<T> &other) const {
+         return obj != other.obj;
+      }
+      
+      int operator !=(const void *ptr) const {
+         return obj != ptr;
+      }
          
       /**
          Allows us to compare the pointer value to any kind of pointer.
