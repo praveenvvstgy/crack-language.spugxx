@@ -170,12 +170,14 @@ class RCPtr {
          Allows us to compare the pointer value of two Managed Object
          Pointers.
        */
-      int operator ==(const RCPtr<T> &other) const {
-	 return obj == other.obj;
+      template <class U>
+      int operator ==(const RCPtr<U> &other) const {
+	 return obj == other.get();
       }
       
-      int operator !=(const RCPtr<T> &other) const {
-         return obj != other.obj;
+      template <class U>
+      int operator !=(const RCPtr<U> &other) const {
+         return obj != other.get();
       }
       
       int operator !=(const void *ptr) const {
