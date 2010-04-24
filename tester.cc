@@ -278,6 +278,14 @@ main() {
      NotTester *notTester = RCPtr<NotTester>::rcast(base);
    END_TEST(!notTester)
 
+   BEGIN_TEST("Comparison between different types");
+      bool deleted;
+      RCPtr<RCBase> base = new Tester(deleted);
+      RCPtr<Tester> derived = base;
+      bool matched = base == derived;
+      bool notMatched = base != derived;
+   END_TEST(matched && !notMatched);
+
    BEGIN_TEST("basic exception construction and streaming");
       Exception ex("basic string");
       ostringstream temp;
@@ -376,7 +384,7 @@ main() {
       int totalSize = 100;
       for (size_t bufSize = 1; bufSize < totalSize; ++bufSize) {
          Byte *buffer = new Byte[bufSize + 4];
-         int beef = *rccast<int *, char *>("BEEF");
+         int beef = *rccast<const int *, const char *>("BEEF");
 
          // stick a marker at the end of the buffer
          *rcast<int *>(&buffer[bufSize]) = beef;
