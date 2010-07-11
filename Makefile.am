@@ -30,10 +30,10 @@ libspug___a_SOURCES = Condition.cc FileReader.cc NativeMarshaller.cc \
    Socket.cc SockException.cc SystemException.cc Thread.cc Time.cc Tracer.cc \
    OwningByteBuf.cc
 include_spugdir = $(prefix)/include/spug
-include_spug_HEADERS = Condition.h Exception.h RCBase.h RCPtr.h Reader.h \
-   Tracer.h FileReader.h types.h Iterator.h IteratorImpl.h \
+include_spug_HEADERS = Condition.h DuplicateException.h Exception.h RCBase.h \
+   RCPtr.h Reader.h Tracer.h FileReader.h types.h Iterator.h IteratorImpl.h \
    STLIteratorImpl.h casts.h Marshallable.h Marshaller.h NativeMarshaller.h \
-   TypeInfo.h String.h UnsupportedOperationException.h \
+   TypeInfo.h Reactable.h String.h UnsupportedOperationException.h \
    OutOfRangeException.h Logger.h DoesNotExistException.h StringFmt.h \
    SystemException.h Mutex.h Locker.h InvalidStateException.h \
    StronglyTypedScalar.h OwningByteBuf.h ByteBuf.h Reactor.h Runnable.h \
