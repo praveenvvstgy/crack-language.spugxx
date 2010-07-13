@@ -25,6 +25,7 @@ lib_LIBRARIES = libspug++.a
 TESTS = tester
 tester_SOURCES = tester.cc TestMarshaller.cc
 tester_LDADD = libspug++.a
+tester_CPPFLAGS = -DTESTDATA='"$(srcdir)/testdata"'
 libspug___a_SOURCES = Condition.cc FileReader.cc NativeMarshaller.cc \
    Marshallable.cc InetAddress.cc Mutex.cc Reactor.cc \
    Socket.cc SockException.cc SystemException.cc Thread.cc Time.cc Tracer.cc \
@@ -41,8 +42,11 @@ include_spug_HEADERS = Condition.h DuplicateException.h Exception.h RCBase.h \
    SockException.h LPtr.h
 noinst_HEADERS = TestMarshaller.h
 EXTRA_DIST = testdata spug++.m4
+DISTCLEANFILES = tester.log marshalled.out
 
-install-autoconf:
-	$(INSTALL) -d $(prefix)/share/aclocal
-	$(INSTALL) spug++.m4 $(prefix)/share/aclocal
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(prefix)/share/aclocal
+	$(INSTALL) $(srcdir)/spug++.m4 $(DESTDIR)$(prefix)/share/aclocal
 
+uninstall-local:
+	rm $(DESTDIR)$(prefix)/share/aclocal/spug++.m4
