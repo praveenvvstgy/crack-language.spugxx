@@ -314,7 +314,7 @@ main() {
 
    BEGIN_TEST("checking FileReader")
       Byte buf[80];
-      FileReader reader("testdata");
+      FileReader reader(TESTDATA);
    END_TEST(reader.read(buf, sizeof(buf)) == sizeof(buf) &&
 	    std::string(reinterpret_cast<const char *>(buf), 80) == 
 	     std::string("1234567890123456789012345678901234567890"
@@ -324,7 +324,7 @@ main() {
 
    BEGIN_TEST("FileReader::seek()")
       Byte buf[5];
-      FileReader reader("testdata");
+      FileReader reader(TESTDATA);
       reader.seek(5);
    END_TEST(reader.read(buf, 5) == 5 &&
 	    std::string(reinterpret_cast<const char *>(buf), 5) == "67890"
@@ -352,7 +352,7 @@ main() {
 #endif
 
    BEGIN_TEST("TypeInfo construction from instance and demangling")
-      FileReader reader("testdata");
+      FileReader reader(TESTDATA);
    END_TEST(TypeInfo::get(reader)->getName() == std::string("spug::FileReader"))
 
    {
