@@ -111,8 +111,7 @@ class NotTester : public RCBase {};
 
 void rcptr_func(RCBase *obj) {}
 
-typedef STLIteratorImpl<char, vector<char>, vector<char>::iterator> 
-   CharIterImpl;
+typedef STLIteratorImpl< char, vector<char> > CharIterImpl;
 
 class TestCharIterImpl : public CharIterImpl {
    public:
