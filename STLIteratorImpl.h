@@ -31,7 +31,8 @@ namespace spug {
 /**
  * Iterator implementation based on STL iterators.  See Iterator.
  */
-template <class Elem, typename Collection, typename iterator>
+template <class Elem, typename Collection, 
+          typename iterator = typename Collection::iterator>
 class STLIteratorImpl : public IteratorImpl<Elem> {
 
    public:
