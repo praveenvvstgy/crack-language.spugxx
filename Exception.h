@@ -35,47 +35,47 @@ namespace spug {
  */
 class Exception : public std::exception {
 
-   protected:
-      std::string msg;
+    protected:
+        std::string msg;
 
-   public:
-      Exception() {}
-      Exception(const char *msg) : msg(msg) {}
-      Exception(const std::string &msg) : msg(msg) {}
+    public:
+        Exception() {}
+        Exception(const char *msg) : msg(msg) {}
+        Exception(const std::string &msg) : msg(msg) {}
 
-      ~Exception() throw () {}
+        ~Exception() throw () {}
 
-      virtual const char *getClassName() const { 
-         return TypeInfo::get(*this)->getName(); 
-      }
+        virtual const char *getClassName() const { 
+            return TypeInfo::get(*this)->getName(); 
+        }
 
-      /**
-       * Returns the user supplied message string.
-       */
-      virtual std::string getMessage() const {
-         return msg;
-      }
+        /**
+         * Returns the user supplied message string.
+         */
+        virtual std::string getMessage() const {
+            return msg;
+        }
 
-      friend std::ostream &
-	 operator <<(std::ostream &out, const Exception &err);
+        friend std::ostream &
+            operator <<(std::ostream &out, const Exception &err);
 };
 
 inline std::ostream &operator <<(std::ostream &out, const Exception &err) {
-   out << err.getClassName() << ": " << err.getMessage();
-   return out;
+    out << err.getClassName() << ": " << err.getMessage();
+    return out;
 }
 
 // some macros to make it extremely easy to define derived exceptions
 
 // Defines an exception class derived from an arbitrary base class
 #define SPUG_DERIVED_EXCEPTION(cls, base) \
-   class cls : public base { \
-      public: \
-         cls() {} \
-	 cls(const char *msg) : base(msg) {} \
-	 cls(const std::string &msg) : base(msg) {} \
-	 virtual const char *getClassName() const { return #cls; } \
-   };
+    class cls : public base { \
+        public: \
+            cls() {} \
+            cls(const char *msg) : base(msg) {} \
+            cls(const std::string &msg) : base(msg) {} \
+            virtual const char *getClassName() const { return #cls; } \
+    };
 
 // defines an exception class derived from spug::Exception
 #define SPUG_EXCEPTION(cls) SPUG_DERIVED_EXCEPTION(cls, spug::Exception)

@@ -35,27 +35,27 @@
 #include "String.h"
 
 namespace spug {
-   /**
-    * For some reason, on gcc 4.1, an std::ostringstream temporary doesn't
-    * behave the same as an ostring with regards to the "<<" operator - in
-    * particular, 'std::ostringstream() << "string val"' will treat the string
-    * as a void*, printing its address.
-    * This class solves that problem.
-    */
-   class StringFmt {
-      private:
-         std::ostringstream out;
+    /**
+     * For some reason, on gcc 4.1, an std::ostringstream temporary doesn't 
+     * behave the same as an ostring with regards to the "<<" operator - in 
+     * particular, 'std::ostringstream() << "string val"' will treat the 
+     * string as a void*, printing its address. This class solves that 
+     * problem.
+     */
+    class StringFmt {
+        private:
+            std::ostringstream out;
 
-      public:
-         template <typename T>
-         std::ostream &operator <<(const T &val) {
-            out << val;
-            return out;
-         }
-   };
+        public:
+            template <typename T>
+            std::ostream &operator <<(const T &val) {
+                out << val;
+                return out;
+            }
+    };
 }
 
 #define SPUG_FSTR(msg) \
-      static_cast<const std::ostringstream&>(spug::StringFmt() << msg).str()
+    static_cast<const std::ostringstream&>(spug::StringFmt() << msg).str()
 
 #endif

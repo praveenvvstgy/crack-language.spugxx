@@ -31,21 +31,21 @@ namespace spug {
  */
 class RCBase {
 
-   private:
-      int refCount;
+    private:
+        int refCount;
 
-   public:
-      RCBase() : refCount(0) {}
-      virtual ~RCBase() {}
+    public:
+        RCBase() : refCount(0) {}
+        virtual ~RCBase() {}
 
-      /** increment the reference count */
-      void incref() { ++refCount; }
+        /** increment the reference count */
+        void incref() { ++refCount; }
 
-      /** decrement the reference count */
-      void decref() { if (!--refCount) delete this; }
+        /** decrement the reference count */
+        void decref() { if (!--refCount) delete this; }
 
-      /** return the reference count */
-      int refcnt() const { return refCount; }
+        /** return the reference count */
+        int refcnt() const { return refCount; }
 };
 
 }
